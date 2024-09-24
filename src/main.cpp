@@ -30,9 +30,10 @@ int main(int argc, char **argv)
 
     while (window.is_running)
     {
-        frame_start = SDL_GetTicks(); // Temps de début de la frame
+        // INIT PROCESS
+        frame_start = SDL_GetTicks(); 
 
-        // Gestion des événements avec une boucle while pour capturer tous les événements
+        // EVENT
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_KEYDOWN)
@@ -48,20 +49,16 @@ int main(int argc, char **argv)
             }
         }
 
-        // Ici, tu peux ajouter du code de rendu (si tu en as besoin)
+        // RENDER
 
-        // Calcul du temps écoulé pour la frame
+
+        // DELAY
         uint32_t frame_time = SDL_GetTicks() - frame_start;
-
-        // Limitation du framerate
         if (FRAME_DELAY > frame_time)
         {
             SDL_Delay(FRAME_DELAY - frame_time);
         }
-
-        // Calcul du delta_time (en secondes)
         delta_time = frame_time / 1000.0f;
-
         std::cout << "Delta time: " << delta_time << std::endl;
     }
 
