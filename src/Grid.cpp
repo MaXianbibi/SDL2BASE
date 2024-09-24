@@ -19,9 +19,6 @@ Grid::Grid(SDL_Renderer *render, int height, int width, int cell_size)
 
     ADD_SIGNAL("window_resize", int, int)->connect([this](int w, int h) {
         updateGrid(h, w, g_cell_size);
-
-
-        std::cout << "gird update" << std::endl;
     });
     
 }
@@ -43,7 +40,7 @@ SDL_Texture *Grid::createGrid()
 
 
     SDL_SetRenderTarget(renderer, grid_texture);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 128,128,128, 128);
     for (int i = 0; i < g_height; i += g_cell_size)
     {
         SDL_RenderDrawLine(renderer, 0, i, g_width, i);

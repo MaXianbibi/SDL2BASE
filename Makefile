@@ -1,7 +1,7 @@
 # Définir le compilateur
 CC = g++
 
-# Définir les options de compilation avec les optimisations
+# Options communes de compilation
 CFLAGS = -Iinclude -IInclude -Wall -std=c++17
 
 # Options de linkage, ajout des bibliothèques SDL2
@@ -22,8 +22,16 @@ SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 # Convertir les fichiers sources .cpp en fichiers objets .o dans le répertoire build/
 OBJECTS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.o,$(SOURCES))
 
-# Règle par défaut (ce que fait 'make')
-all: $(TARGET)
+# Règle par défaut (ce que fait 'make' sans argument)
+all: release
+
+# Compilation en mode release
+release: CFLAGS += -O2  # Optimisation
+release: $(TARGET)
+
+# Compilation en mode debug
+debug: CFLAGS += -g  # Ajout des symboles de débogage
+debug: $(TARGET)
 
 # Créer l'exécutable à partir des fichiers objets, en liant SDL2
 $(TARGET): $(OBJECTS)
@@ -47,5 +55,5 @@ clean:
 	del /F /Q $(BUILDDIR)\*.o
 	del /F /Q $(TARGET)
 
-# Recompiler tout
+# Recompiler tout en nettoyant d'abord
 re: clean all

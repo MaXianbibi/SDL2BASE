@@ -10,14 +10,13 @@ Window::Window()
     renderer = NULL;
 
 
-    ADD_SIGNAL("escape_key_pressed")->connect([this]() {this->is_running = false;});
+    ADD_SIGNAL("close_window")->connect([this]() {this->is_running = false;});
     ADD_SIGNAL("window_resize", int, int)->connect([this](int w, int h) {
 
         window_width = w;
         window_height = h;
 
         SDL_RenderSetViewport(get_renderer(), NULL);
-        std::cout << "windows update" << std::endl;
     });
 }
 
