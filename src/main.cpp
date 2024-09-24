@@ -36,19 +36,16 @@ int main(int argc, char **argv)
         {
             if (event.type == SDL_KEYDOWN)
             {
-                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                {
-                    // EventManager::getInstance().emitSignal("escape_key_pressed");
-                    EMIT_SIGNAL("escape_key_pressed");
-                }
-                if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
-                {
-                    EMIT_SIGNAL("damage_taken", 10);
-                }
+                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) EMIT_SIGNAL("escape_key_pressed");
+   
             }
 
             if (event.type == SDL_WINDOWEVENT)
             {
+                if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+                {
+                    EMIT_SIGNAL("escape_key_pressed");
+                }
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED)
                 {
 
