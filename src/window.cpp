@@ -25,7 +25,7 @@ Result Window::createWindow()
         fatal(message);
     }
 
-    window = SDL_CreateWindow("Baller", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Baller", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (window == NULL)
     {
         std::string message = "Error creating window: " + std::string(SDL_GetError());
