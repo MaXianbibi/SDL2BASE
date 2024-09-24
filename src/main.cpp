@@ -54,11 +54,7 @@ int main(int argc, char **argv)
 
                     std::cout << window.window_width << " " << window.window_height << std::endl;
                     EMIT_SIGNAL("window_resize", event.window.data1, event.window.data2);
-
-
-                    std::cout << window.window_width << " " << window.window_height << std::endl;
-
-                    SDL_RenderSetViewport(window.get_renderer(), NULL); // Adapter le viewport à la nouvelle taille
+                    
                 }
             }
         }
