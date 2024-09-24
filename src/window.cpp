@@ -1,12 +1,27 @@
 #include <SDL2/SDL.h>
 #include "../include/window.hpp"
 #include "../include/utiles.hpp"
+#include "../include/EventManager.hpp"
 
 
 Window::Window()
 {
     window = NULL;
     renderer = NULL;
+
+
+    ADD_SIGNAL("escape_key_pressed")->connect([this]() {this->is_running = false;});
+
+
+    std::cout << "hmm" << std::endl;
+
+    ADD_SIGNAL("window_resize", int, int)->connect([this](int w, int h) {
+
+        window_width = w;
+        window_height = h;
+
+        std::cout << "windows update" << std::endl;
+    });
 }
 
 Window::~Window()

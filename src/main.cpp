@@ -23,10 +23,6 @@ int main(int argc, char **argv)
 
 
 
-    ADD_SIGNAL("damage_taken", int)->connect([](int damage) {std::cout << "Damage taken: " << damage << std::endl;});
-
-
-
     SDL_Event event;
     uint32_t frame_start = 0;
     float delta_time = 0;
@@ -42,7 +38,8 @@ int main(int argc, char **argv)
             {
                 if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                 {
-                    // escape_signal->emit();
+                    // EventManager::getInstance().emitSignal("escape_key_pressed");
+                    EMIT_SIGNAL("escape_key_pressed");
                 }
                 if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
                 {
@@ -54,15 +51,13 @@ int main(int argc, char **argv)
             {
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED)
                 {
-                    // event_manager.window_resized.emit();
-                    window.window_width = event.window.data1;  // Nouvelle largeur
-                    window.window_height = event.window.data2; // Nouvelle hauteur
 
-                    // Ajustements que tu veux faire en fonction de la nouvelle taille
-                    std::cout << "Fenêtre redimensionnée : "
-                              << window.window_width << "x" << window.window_height << std::endl;
+                    std::cout << window.window_width << " " << window.window_height << std::endl;
+                    EMIT_SIGNAL("window_resize", event.window.data1, event.window.data2);
 
-                    // Si tu utilises un renderer, tu peux aussi adapter le viewport :
+
+                    std::cout << window.window_width << " " << window.window_height << std::endl;
+
                     SDL_RenderSetViewport(window.get_renderer(), NULL); // Adapter le viewport à la nouvelle taille
                 }
             }

@@ -18,11 +18,13 @@ private:
 
 public:
     Grid(SDL_Renderer *render ,int height, int width, int cell_size);
-    SDL_Texture* createGrid();
     ~Grid() { SDL_DestroyTexture(grid_texture);};
     
-
-    Signal_Beta<> window_resized;
+    SDL_Texture* createGrid();
+    SDL_Texture* getGridTexture() { return grid_texture; };
+    SDL_Texture* updateGrid(int height, int width, int cell_size);
+    
+    
 };
 
 
