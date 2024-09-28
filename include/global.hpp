@@ -15,7 +15,87 @@ struct Vector2
 {
     T x;
     T y;
+
+    Vector2<T> operator+(const Vector2<T> &v)
+    {
+        return {x + v.x, y + v.y};
+    }
+
+    Vector2<T> operator-(const Vector2<T> &v)
+    {
+        return {x - v.x, y - v.y};
+    }
+
+    Vector2<T> operator*(const T &s)
+    {
+        return {x * s, y * s};
+    }
+
+    Vector2<T> operator/(const T &s)
+    {
+        return {x / s, y / s};
+    }
+
+    Vector2<T> &operator+=(const Vector2<T> &v)
+    {
+        x += v.x;
+        y += v.y;
+        return *this;
+    }
+
+    Vector2<T> &operator-=(const Vector2<T> &v)
+    {
+        x -= v.x;
+        y -= v.y;
+        return *this;
+    }
+
+    Vector2<T> &operator*=(const T &s)
+    {
+        x *= s;
+        y *= s;
+        return *this;
+    }
+
+    Vector2<T> &operator/=(const T &s)
+    {
+        x /= s;
+        y /= s;
+        return *this;
+    }
+
+    bool operator==(const Vector2<T> &v)
+    {
+        return x == v.x && y == v.y;
+    }
+
+    bool operator!=(const Vector2<T> &v)
+    {
+        return x != v.x || y != v.y;
+    }
+
+    Vector2<T> &operator-()
+    {
+        x = -x;
+        y = -y;
+        return *this;
+    }
+
+    Vector2<T> operator*(const Vector2<T> &v)
+    {
+        return {x * v.x, y * v.y};
+    }
+
+    Vector2<T> &operator*=(const Vector2<T> &v)
+    {
+        x *= v.x;
+        y *= v.y;
+        return *this;
+    }
+
 };
+
+
 
 template <typename T>
 struct Rect
