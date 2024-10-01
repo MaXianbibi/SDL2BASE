@@ -3,6 +3,8 @@
 
 
 #include <cstdint>
+#include <iostream>
+#include <cmath>
 
 enum Result
 {
@@ -93,9 +95,20 @@ struct Vector2
         return *this;
     }
 
+    // operator <<
+    friend std::ostream &operator<<(std::ostream &os, const Vector2<T> &v)
+    {
+        os << "(" << v.x << ", " << v.y << ")";
+        return os;
+    }
+
+
+    float distance_to(const Vector2<T> &v)
+    {
+        return sqrt((v.x - x) * (v.x - x) + (v.y - y) * (v.y - y));
+    }
+
 };
-
-
 
 template <typename T>
 struct Rect
@@ -121,8 +134,6 @@ union Color
     Color(uint32_t v) : value(v) {}
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r), g(g), b(b), a(a) {}
 };
-
-
 
 
 #define SCREEN_WIDTH 1280

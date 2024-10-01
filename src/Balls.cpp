@@ -58,7 +58,12 @@ Balls::Balls()
 {
     this->origin = {radius, radius};
 
-    ADD_SIGNAL("process", float)->connect([this](float delta_time) {this->physicsUpdate(delta_time);});}
+    ADD_SIGNAL("process", float)->connect([this](float delta_time)
+                                          { this->physicsUpdate(delta_time); });
+
+    ADD_SIGNAL("start_process")->connect([this]()
+                                         { this->physics = true; });
+}
 
 Vector2<float> Balls::getCenter()
 {
@@ -67,11 +72,17 @@ Vector2<float> Balls::getCenter()
 
 void Balls::physicsUpdate(float delta_time)
 {
+    if (!physics)
+        return;
     // Parcours des éléments pour détecter la collision avec chaque élément statique
-    for (const auto& element : Element::elements)
+    for (const auto &element : Element::elements)
     {
+        if (!element->is_active && !element->is_finished)
+        {
+            continue;
+        }
         int distance = 0;
-        SDL_Point closestPoint = closestPointOnPolygon(this->getPosition().x, this->getPosition().y, element->getPolygon(), &distance);
+        SDL_Point closestPoint = closestPointOnPolygon(this->getPosition().x, this->getPosition().y, element->getOffsetPolygon(), &distance);
 
         // Si la balle est en collision avec l'élément
         if (distance <= this->getRadius() && this->acceleration.y > 0)
@@ -83,8 +94,7 @@ void Balls::physicsUpdate(float delta_time)
             // Calculer le vecteur de collision
             Vector2<float> collisionVector = {
                 closestPoint.x - this->getPosition().x,
-                closestPoint.y - this->getPosition().y
-            };
+                closestPoint.y - this->getPosition().y};
 
             // Normaliser le vecteur de collision pour obtenir la normale
             Vector2<float> normal = normalize(collisionVector);
@@ -106,7 +116,6 @@ void Balls::physicsUpdate(float delta_time)
             }
 
             // Appliquer la restitution et limiter la vitesse après le rebond
- 
         }
         else if (distance > this->getRadius()) // Si la balle est en chute libre
         {

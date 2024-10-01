@@ -13,7 +13,8 @@
 class Balls : public DynamicElement
 {
 private:
-    float radius = 20.0f;  
+    float radius = 20.0f;
+    bool physics = false;
 public:
     Balls(int radius, int color) {
         this->radius = radius;

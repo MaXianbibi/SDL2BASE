@@ -44,29 +44,63 @@ void Wall::createWallTexture(SDL_Renderer *renderer, Color color)
 
 Wall::Wall(Polygon polygon)
 {
+    if (polygon.size() < 3)
+    {
+        std::cerr << "A polygon must have at least 3 points" << std::endl;
+        fatal("A polygon must have at least 3 points");
+    }
+    else {
+        this->is_finished = true;
+        this->is_active = true;
+    }
     this->polygon = polygon;
+    init();
+};
 
+
+void Wall::init()
+{
+    std::cout << "test" << std::endl;
+    
+    // Initialiser min_x et min_y à la première valeur du polygone
     int min_x = polygon[0].x;
     int min_y = polygon[0].y;
 
-    int max_x = polygon[0].x;
-    int max_y = polygon[0].y;
-
-    for (size_t i = 0; i < polygon.size(); i++)
+    // Trouver les minima du polygone (min_x et min_y)
+    for (size_t i = 1; i < polygon.size(); i++) // commencer à i = 1 car on a déjà pris le premier point
     {
         if (polygon[i].x < min_x)
             min_x = polygon[i].x;
         if (polygon[i].y < min_y)
             min_y = polygon[i].y;
+    }
+
+    // Définir l'offset pour repositionner le polygone
+
+    // Translater tous les points du polygone pour qu'ils commencent à (0, 0)
+    for (size_t i = 0; i < polygon.size(); i++)
+    {
+        polygon[i].x -= min_x;
+        polygon[i].y -= min_y;
+    }
+
+    // Calculer les dimensions maximales du polygone après translation
+    int max_x = polygon[0].x;
+    int max_y = polygon[0].y;
+    for (size_t i = 1; i < polygon.size(); i++) // commencer à i = 1 pour éviter de re-vérifier le premier point
+    {
         if (polygon[i].x > max_x)
             max_x = polygon[i].x;
         if (polygon[i].y > max_y)
             max_y = polygon[i].y;
     }
 
-    height = max_y - min_y + 1;
-    width = max_x - min_x + 1;
+    
+    setOffset({min_x, min_y});
+
+    // Déterminer la hauteur et la largeur de la texture en fonction des nouvelles coordonnées du polygone
+    height = max_y + 1;
+    width = max_x + 1;
+}
 
 
-
-};

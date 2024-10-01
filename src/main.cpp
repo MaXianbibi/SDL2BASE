@@ -13,7 +13,6 @@
 
 // Définir le framerate cible
 const int FRAME_DELAY = 1000 / TARGET_FPS;
-
 std::vector<std::shared_ptr<StaticElement>> Element::elements;
 
 int main(int argc, char **argv)
@@ -48,7 +47,6 @@ int main(int argc, char **argv)
         {0, 150},
     };
 
-
     // Floor
     Polygon floor = {
          {0, 0},
@@ -56,7 +54,6 @@ int main(int argc, char **argv)
         {3000, 200},
         {0, 200},
     };
-
     std::shared_ptr<Wall> wall = std::make_shared<Wall>(square);
     std::shared_ptr<Wall> floor_wall = std::make_shared<Wall>(floor);
     wall->setFilled(true);
@@ -65,21 +62,25 @@ int main(int argc, char **argv)
     floor_wall->createWallTexture(window.get_renderer(), 0xFF0000FF);
     wall->setOffset({500, 200});
     floor_wall->setOffset({0, 500});
-
     Element::elements.push_back(wall);
     Element::elements.push_back(floor_wall);
+
 
     while (window.is_running)
     {
         // INIT PROCESS
         frame_start = SDL_GetTicks();
-
         // EVENT
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_KEYDOWN)
                 if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                     EMIT_SIGNAL("close_window");
+                else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+                {
+                    EMIT_SIGNAL("start_process");
+                }
+                
             if (event.type == SDL_WINDOWEVENT)
             {
                 if (event.window.event == SDL_WINDOWEVENT_CLOSE)
@@ -87,7 +88,47 @@ int main(int argc, char **argv)
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED)
                     EMIT_SIGNAL("window_resize", event.window.data1, event.window.data2);
             }
+
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                     
+                    if ( Element::elements.back()->is_finished)
+                    {
+                        std::cout << "new polygon" << std::endl;
+
+                        std::shared_ptr<Wall> new_wall = std::make_shared<Wall>();
+                        new_wall->setFilled(true);
+                        Element::elements.push_back(new_wall);
+
+
+                    }
+                    Vector2<float> point = {event.button.x, event.button.y};
+
+
+                    if (Element::elements.back()->getPolygon().size() > 0 && point.distance_to(Element::elements.back()->getPolygon().front()) < 30) {
+                        
+                        point = Element::elements.back()->getPolygon().front();
+                        Element::elements.back()->is_finished = true;
+                        auto new_wall = std::dynamic_pointer_cast<Wall>(Element::elements.back());
+                        if (new_wall) {
+                            new_wall->init();
+                            new_wall->createWallTexture(window.get_renderer(), 0xFF0000FF);
+                            new_wall->is_active = true;
+                            new_wall->setFilled(true);
+                            
+                        }
+
+                        
+
+                    } 
+                    Element::elements.back()->getPolygon().push_back(point);
+                }
+            } 
         }
+
+
 
         // Process
         EMIT_SIGNAL("process", delta_time);
@@ -116,12 +157,13 @@ int main(int argc, char **argv)
         }
 
         // TESTING COLLISION
-   
-
+        int i = 0;
         for (auto &element : Element::elements)
         {
+
             auto wall = std::dynamic_pointer_cast<Wall>(element);
-            if (wall)
+
+            if (wall->wall_texture)
             {
                 SDL_Rect element_rect = {
                     wall->getOffset().x,
@@ -130,10 +172,32 @@ int main(int argc, char **argv)
                     wall->height,
                 };
 
-                SDL_RenderCopy(window.get_renderer(), wall->wall_texture, NULL, &element_rect);
+                int res = SDL_RenderCopy(window.get_renderer(), wall->wall_texture, NULL, &element_rect);
+                if (res != 0)
+                {
+                    std::cerr << "Error: " << SDL_GetError() << std::endl;
+                    fatal("Error: SDL_RenderCopy failed");
+                }
+                
+                
+            }
+            i++;
+        }
+
+
+
+        if (!Element::elements.back()->is_finished)
+        {
+            SDL_SetRenderDrawColor(window.get_renderer(), 255, 0, 0, 255); // Couleur noire avec alpha 0 (transparent)
+            Polygon polygon = Element::elements.back()->getPolygon();
+            for (size_t i = 0; i < polygon.size() - 1; i++){
+                auto point = polygon[i];
+                auto next = polygon[(i + 1) % polygon.size()];
+                SDL_RenderDrawLine(window.get_renderer(), point.x, point.y, next.x, next.y);
             }
         }
 
+        
         SDL_RenderPresent(window.get_renderer());
 
         // DELAY
@@ -144,6 +208,5 @@ int main(int argc, char **argv)
         }
         delta_time = frame_time / 1000.0f;
     }
-
     return 0;
 }
